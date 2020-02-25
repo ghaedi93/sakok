@@ -1,4 +1,4 @@
-const express       = require('express'), 
+const express       = require    ('express'), 
       bodyParser    = require    ('body-parser'),
       mongoose      = require    ('mongoose'),
       keys          = require    ('./config/keys')
@@ -17,9 +17,26 @@ const mongoConnection = mongoose.connect(keys.mongoUrl,{useUnifiedTopology:true,
 const Product = require('./models/Product'),
       Category= require('./models/Category')
 
+
+//custom function 
+function makeQuery(req){
+    const query = {}
+    const argumentsNumber = arguments.length;
+    //start checking process from index 1 since index 0 is the req and containing incoming http request  
+    for(i=1;i<argumentsNumber;i++){
+        if(req.query[arguments[i]]){
+            query[arguments[i]]=req.query[arguments[i]]
+        }
+    }
+    return query
+}
+
+
+
 //routes
 app.get('/products',(req, res)=>{
-    Product.find({}).populate('category').then(products=>res.status(200).json(products))
+    const query = makeQuery(req,'name','id','status','category');    
+    Product.find(query).populate('category').then(products=>res.status(200).json(products))
       .catch(error=>res.json(error))
 })
 app.get('/products/:id',(req, res)=>{
@@ -48,7 +65,8 @@ app.delete('/products/:id',(req, res)=>{
 
 
 app.get('/categories',(req, res)=>{
-    Category.find({}).then(categories=>res.status(200).json(categories))
+    const query = makeQuery(req,'name','id');    
+    Category.find(query).then(categories=>res.status(200).json(categories))
       .catch(error=>res.json(error))
 })
 app.get('/categories/:id',(req, res)=>{
