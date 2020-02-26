@@ -10,6 +10,10 @@ const productSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref :'categories',
         required:true
+    },
+    description:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref :'descriptions'
     }
 });
 module.exports = Product = mongoose.model('products',productSchema)

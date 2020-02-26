@@ -15,7 +15,8 @@ const mongoConnection = mongoose.connect(keys.mongoUrl,{useUnifiedTopology:true,
 //importing models 
 
 const Product = require('./models/Product'),
-      Category= require('./models/Category')
+      Category= require('./models/Category'),
+      Description=require('./models/Description')
 
 
 //custom function 
@@ -37,11 +38,11 @@ function makeQuery(req){
 app.get('/products',(req, res)=>{
     const query = makeQuery(req,'name','id','status','category');    
     Product.find(query).populate('category').then(products=>res.status(200).json(products))
-      .catch(error=>res.json(error))
+      .catch(error=>res.status(400).json(error))
 })
 app.get('/products/:id',(req, res)=>{
     Product.find({_id:req.params.id}).populate('category').then(products=>res.status(200).json(products))
-    .catch(error=>res.json(error))
+    .catch(error=>res.status(400).json(error))
 })
 app.post('/products',(req,res)=>{
     Product.create({
@@ -51,27 +52,27 @@ app.post('/products',(req,res)=>{
         status      :req.body.status,
         category    :req.body.category
     }).then(products=>res.json(products))
-    .catch(error=>res.json(error))
+    .catch(error=>res.status(400).json(error))
 })
 app.put('/products/:id',(req,res)=>{
     Product.updateOne({_id:req.params.id},{$set:req.body})
     .then(result=>res.status(200).json(result))
-    .catch(error=>res.json(error))
+    .catch(error=>res.status(400).json(error))
 })
 app.delete('/products/:id',(req, res)=>{
     Product.findByIdAndRemove(req.params.id).then(deletedProduct=>res.status(200).json(deletedProduct))
-    .catch(err=>res.json(err))
+    .catch(err=>res.status(400).json(err))
 })
 
 
 app.get('/categories',(req, res)=>{
     const query = makeQuery(req,'name','id');    
     Category.find(query).then(categories=>res.status(200).json(categories))
-      .catch(error=>res.json(error))
+      .catch(error=>res.status(400).json(error))
 })
 app.get('/categories/:id',(req, res)=>{
     Category.find({_id:req.params.id}).then(categories=>res.status(200).json(categories))
-    .catch(error=>res.json(error))
+    .catch(error=>res.status(400).json(error))
 })
 app.post('/categories',(req,res)=>{
     Category.create({
@@ -79,16 +80,16 @@ app.post('/categories',(req,res)=>{
         id          :req.body.id,
         description :req.body.description
     }).then(categories=>res.status(200).json(categories))
-    .catch(error=>res.json(error))
+    .catch(error=>res.status(400).json(error))
 })
 app.put('/categories/:id',(req,res)=>{
     Category.updateOne({_id:req.params.id},{$set:req.body})
     .then(result=>res.status(200).json(result))
-    .catch(error=>res.json(error))
+    .catch(error=>res.status(400).json(error))
 })
 app.delete('/categories/:id',(req, res)=>{
     Category.findByIdAndRemove(req.params.id).then(deletedCategory=>res.status(200).json(deletedCategory))
-    .catch(err=>res.json(err))
+    .catch(err=>res.status(400).json(err))
 })
 const server = app.listen(keys.port,(req, res)=>{
     console.log('app is running and listening to port',keys.port)
