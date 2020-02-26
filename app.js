@@ -16,7 +16,7 @@ const mongoConnection = mongoose.connect(keys.mongoUrl,{useUnifiedTopology:true,
 
 const Product = require('./models/Product'),
       Category= require('./models/Category'),
-      Description=require('./models/Description')
+      Profile=require('./models/Profile')
 
 
 //custom function 
@@ -37,11 +37,11 @@ function makeQuery(req){
 //routes
 app.get('/products',(req, res)=>{
     const query = makeQuery(req,'name','id','status','category');    
-    Product.find(query).populate('category').then(products=>res.status(200).json(products))
+    Product.find(query).populate('category profile').then(products=>res.status(200).json(products))
       .catch(error=>res.status(400).json(error))
 })
 app.get('/products/:id',(req, res)=>{
-    Product.find({_id:req.params.id}).populate('category').then(products=>res.status(200).json(products))
+    Product.find({_id:req.params.id}).populate('category profile').then(products=>res.status(200).json(products))
     .catch(error=>res.status(400).json(error))
 })
 app.post('/products',(req,res)=>{
@@ -91,6 +91,38 @@ app.delete('/categories/:id',(req, res)=>{
     Category.findByIdAndRemove(req.params.id).then(deletedCategory=>res.status(200).json(deletedCategory))
     .catch(err=>res.status(400).json(err))
 })
+//adding profiles
+app.get('/profiles',(req, res)=>{
+    Profile.find({}).then(profiles=>res.status(200).json(profiles))
+      .catch(error=>res.status(400).json(error))
+})
+
+app.post('/profiles',(req, res)=>{
+    const productId = req.body.productId; 
+    delete req.body.productId;
+    const profile = req.body; 
+    Profile.create(profile)
+    .then(recentProfile=>{
+        Product.findByIdAndUpdate(productId,{$set:
+            {profile:recentProfile._id}})
+        .then(result=>res.status(200).json(result))
+        .catch(error=>res.status(400).json(error))
+    })
+    .catch(err=>{
+        res.status(400).json(err)
+    })
+})
+app.put('/profiles/:id',(req, res)=>{
+    Profile.updateOne({_id:req.params.id},{$set:req.body})
+    .then(result=>res.status(200).json(result))
+    .catch(error=>res.status(400).json(error))
+})
+app.delete('/profiles/:id',(req, res)=>{
+    Profile.findByIdAndRemove(req.params.id).then(deletedProfile=>res.status(200).json(deletedProfile))
+    .catch(err=>res.status(400).json(err))
+})
+
+
 const server = app.listen(keys.port,(req, res)=>{
     console.log('app is running and listening to port',keys.port)
 })

@@ -11,9 +11,9 @@ const productSchema = new mongoose.Schema({
         ref :'categories',
         required:true
     },
-    description:{
+    profile:{
         type:mongoose.Schema.Types.ObjectId,
-        ref :'descriptions'
+        ref :'profiles',
     }
 });
 module.exports = Product = mongoose.model('products',productSchema)
