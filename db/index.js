@@ -1,15 +1,18 @@
 const mongoose = require('mongoose');
 const {mongoUrl}   = require('../config');
-
+/**
+ * this function return a promise first it check NODE_ENV to see 'test'
+ * if 'test' exists it run mocks database with mockgoose to execute unit tests
+ *  
+ */
 function connect(){
     return new Promise((resolve, reject)=>{
        if(process.env.NODE_ENV === 'test'){
-        var Mockgoose = require('mockgoose').Mockgoose;
-        var mockgoose = new Mockgoose(mongoose);
+        const Mockgoose = require('mockgoose').Mockgoose;
+        const mockgoose = new Mockgoose(mongoose);
             mockgoose.prepareStorage()
            .then(()=>{
-            mongoose.connect(mongoUrl,
-                {useNewUrlParser:true,useUnifiedTopology:true})
+                mongoose.connect(mongoUrl,{useNewUrlParser:true,useUnifiedTopology:true})
                 .then((res,err)=>{
                     if(err) return reject(err);
                     console.log('connected to Test database')
@@ -18,8 +21,7 @@ function connect(){
            }) 
 
        } else{
-        mongoose.connect(mongoUrl,
-            {useNewUrlParser:true,useUnifiedTopology:true})
+            mongoose.connect(mongoUrl,{useNewUrlParser:true,useUnifiedTopology:true})
             .then((res,err)=>{
                 if(err) return reject(err);
                 console.log('connected to database')
