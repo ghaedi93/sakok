@@ -14,7 +14,7 @@ router.get('/',(req, res)=>{
     .catch(error=>res.status(400).json(error))
 })
 router.get('/:id',(req, res)=>{
-    Category.find({_id:req.params.id})
+    Category.findOne({_id:req.params.id})
     .then(categories=>res.status(200).json(categories))
     .catch(error=>res.status(400).json(error))
 })

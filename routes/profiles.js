@@ -11,7 +11,7 @@ router.get('/',(req, res)=>{
           .catch(error=>res.status(400).json(error))
     })
 router.get('/:id',(req, res)=>{
-        Profile.find({_id:req.params.id}).then(profile=>res.status(200).json(profile))
+        Profile.findOne({_id:req.params.id}).then(profile=>res.status(200).json(profile))
         .catch(error=>res.status(400).json(error))
     })
 router.post('/',(req, res)=>{
@@ -20,7 +20,7 @@ router.post('/',(req, res)=>{
         const profile = req.body; 
         Profile.create(profile)
         .then(recentProfile=>{
-            Product.findByIdAndUpdate(productId,{$set:
+            Product.updateOne({_id:productId},{$set:
                 {profile:recentProfile._id}})
             .then(result=>res.status(200).json(result))
             .catch(error=>res.status(400).json(error))

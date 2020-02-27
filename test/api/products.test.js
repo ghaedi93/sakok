@@ -83,8 +83,7 @@ it('GET-/prodcuts/:id ,should fetch a category document based on its id',(done)=
               const productId = res.body._id; 
               request(app).get(`/products/${productId}`)
               .then(res=>{
-                let product = res.body;
-                    product = product[0];
+                const product = res.body;
                 expect(product).to.have.property('name')
                 expect(product).to.have.property('id')
                 expect(product).to.have.property('description')

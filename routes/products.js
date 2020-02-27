@@ -15,7 +15,7 @@ router.get('/',(req, res)=>{
     .catch(error=>res.status(400).json(error))
 })
 router.get('/:id',(req, res)=>{
-    Product.find({_id:req.params.id}).populate('category profile')
+    Product.findOne({_id:req.params.id}).populate('category profile')
     .then(products=>res.status(200).json(products))
     .catch(error=>res.status(400).json(error))
 })

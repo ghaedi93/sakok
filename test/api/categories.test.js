@@ -58,8 +58,7 @@ describe('/categories',()=>{
             const categoryId = res.body._id; 
             request(app).get(`/categories/${categoryId}`)
             .then(res=>{
-                let category = res.body;
-                    category = category[0];
+                const category = res.body;
                 expect(category).to.have.property('name')
                 expect(category).to.have.property('id')
                 expect(category).to.have.property('description')
