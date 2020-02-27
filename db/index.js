@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {mongoUrl}   = require('../config/keys');
+const {mongoUrl}   = require('../config');
 
 function connect(){
     return new Promise((resolve, reject)=>{
