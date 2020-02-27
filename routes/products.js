@@ -5,11 +5,12 @@ const Product = require('../db/models/Product'),
       Category= require('../db/models/Category'),
       Profile=require('../db/models/Profile')
 
-const {makeQuery}=require('../lib');
+const makeQuery=require('../lib/makeQuery');
 
 
 router.get('/',(req, res)=>{
-    const query = makeQuery(req,'name','id','status','category');    
+    const requestQuery = req.query;
+    const query = makeQuery(requestQuery,'id','name','status','category');    
     Product.find(query).populate('category profile')
     .then(products=>res.status(200).json(products))
     .catch(error=>res.status(400).json(error))

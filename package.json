@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test" : "mocha --timeout 1200000 --recursive --exit"
+    "start": "node server.js",
+    "test": "mocha --timeout 1200000 --recursive --exit"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "faker": "^4.1.0",
+    "jsdoc": "^3.6.3",
     "mocha": "^7.1.0",
     "mockgoose": "^8.0.4",
     "supertest": "^4.0.2"

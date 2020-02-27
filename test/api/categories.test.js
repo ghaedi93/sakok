@@ -46,7 +46,40 @@ describe('/categories',()=>{
         })
         .catch(err=>done(err))
     })
-
+    it('GET-/categories?name=name1 ,should contain 1 category documents after creating 2',(done)=>{
+        request(app).post('/categories')
+        .send({
+            name       :faker.commerce.department(), 
+            id         :faker.random.number(), 
+            description:faker.commerce.productAdjective() 
+        })
+        .then(res=>{
+            request(app).post('/categories')
+            .send({
+            name       :'name1', 
+            id         :faker.random.number(), 
+            description:faker.commerce.productAdjective() 
+        })
+        .then(res=>{
+            request(app).post('/categories')
+            .send({
+                name       :'name2', 
+                id         :faker.random.number(), 
+                description:faker.commerce.productAdjective() 
+            })
+            .then(res=>{
+                request(app).get('/categories?name=name1')
+                .then(res=>{
+                    const categories = res.body; 
+                    expect(categories.length).to.equal(1);
+                    done(); 
+                    })
+                .catch(err=>done(err))
+                })
+            })
+        })
+        .catch(err=>done(err))
+    })
     it('GET-/categories/:id ,should fetch a category document based on its id',(done)=>{
         request(app).post('/categories')
         .send({

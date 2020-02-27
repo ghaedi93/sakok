@@ -5,10 +5,11 @@ const Product = require('../db/models/Product'),
       Category= require('../db/models/Category'),
       Profile=require('../db/models/Profile')
 
-const {makeQuery}=require('../lib');
+const makeQuery=require('../lib/makeQuery');
 
 router.get('/',(req, res)=>{
-    const query = makeQuery(req,'name','id');    
+    const requestQuery = req.query;
+    const query = makeQuery(requestQuery,'name','id'); 
     Category.find(query)
     .then(categories=>res.status(200).json(categories))
     .catch(error=>res.status(400).json(error))
