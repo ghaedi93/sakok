@@ -8,18 +8,18 @@ function connect(){
         var mockgoose = new Mockgoose(mongoose);
             mockgoose.prepareStorage()
            .then(()=>{
-            console.log(process.env.NODE_ENV)
             mongoose.connect(mongoUrl,
-                {useNewUrlParser:true,useCreateIndex:true,useUnifiedTopology:true})
+                {useNewUrlParser:true,useUnifiedTopology:true})
                 .then((res,err)=>{
                     if(err) return reject(err);
+                    console.log('connected to Test database')
                     resolve(); 
                 });
            }) 
 
        } else{
         mongoose.connect(mongoUrl,
-            {useNewUrlParser:true,useCreateIndex:true,useUnifiedTopology:true})
+            {useNewUrlParser:true,useUnifiedTopology:true})
             .then((res,err)=>{
                 if(err) return reject(err);
                 console.log('connected to database')
