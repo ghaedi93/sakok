@@ -3,7 +3,6 @@ const {mongoUrl}   = require('../config/keys');
 
 function connect(){
     return new Promise((resolve, reject)=>{
-        console.log()
        if(process.env.NODE_ENV === 'test'){
         var Mockgoose = require('mockgoose').Mockgoose;
         var mockgoose = new Mockgoose(mongoose);

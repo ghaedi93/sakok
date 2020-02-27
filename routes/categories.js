@@ -9,11 +9,13 @@ const {makeQuery}=require('../lib');
 
 router.get('/',(req, res)=>{
     const query = makeQuery(req,'name','id');    
-    Category.find(query).then(categories=>res.status(200).json(categories))
-      .catch(error=>res.status(400).json(error))
+    Category.find(query)
+    .then(categories=>res.status(200).json(categories))
+    .catch(error=>res.status(400).json(error))
 })
 router.get('/:id',(req, res)=>{
-    Category.find({_id:req.params.id}).then(categories=>res.status(200).json(categories))
+    Category.find({_id:req.params.id})
+    .then(categories=>res.status(200).json(categories))
     .catch(error=>res.status(400).json(error))
 })
 router.post('/',(req,res)=>{
@@ -21,7 +23,8 @@ router.post('/',(req,res)=>{
         name        :req.body.name,
         id          :req.body.id,
         description :req.body.description
-    }).then(categories=>res.status(200).json(categories))
+    })
+    .then(categories=>res.status(200).json(categories))
     .catch(error=>res.status(400).json(error))
 })
 router.put('/:id',(req,res)=>{
@@ -30,7 +33,8 @@ router.put('/:id',(req,res)=>{
     .catch(error=>res.status(400).json(error))
 })
 router.delete('/:id',(req, res)=>{
-    Category.findByIdAndRemove(req.params.id).then(deletedCategory=>res.status(200).json(deletedCategory))
+    Category.deleteOne({_id:req.params.id})
+    .then(deletedCategory=>res.status(200).json(deletedCategory))
     .catch(err=>res.status(400).json(err))
 })
 
