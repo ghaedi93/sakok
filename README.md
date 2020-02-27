@@ -1,4 +1,6 @@
-npm install :install dependencies
-npm run test:running tests 
-npm start   :starting webserver 
+1.npm install
+
+2.npm run test 
+
+3.npm start
  
