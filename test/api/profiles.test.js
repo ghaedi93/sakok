@@ -151,7 +151,6 @@ it('DELETE-/profiles/:id ,should delete a profile of a product document and prof
                     request(app).get(`/products/${productId}`)
                     .then(res=>{
                         const profile = res.body.profile; 
-                        console.log(res.body);
                         expect(profile).to.equal(null);
                         done(); 
                         })
