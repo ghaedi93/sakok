@@ -9,7 +9,6 @@ const Product = require('../db/models/Product'),
 /**
  * makeQuery function creates a query to use in mongoose find method . 
  * @type {object}
- * @returns {object}
  */
 const makeQuery=require('../lib/makeQuery');
 
