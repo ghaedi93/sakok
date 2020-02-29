@@ -7,13 +7,13 @@ const conn = require('../../db');
 const faker= require('faker');
 
 describe('/products',()=>{
-    before((done)=>{
+    beforeEach((done)=>{
         conn.connect()
         .then(()=>done())
         .catch(err=>done(err))
     })
 
-    after((done)=>{
+    afterEach((done)=>{
         conn.close()
         .then(()=>{
             done()
@@ -22,16 +22,15 @@ describe('/products',()=>{
             done(err)
         })
     })
-it('POST-/profiles ,should return a product document containing color and price profile',(done)=>{
-        request(app).post('/categories')
+it('POST-/profiles/:id ,should return a product document containing color and price profile',async()=>{
+        const category1=await request(app).post('/categories')
         .send({
             name       :faker.commerce.department(), 
             id         :faker.random.number(), 
             description:faker.commerce.productAdjective() 
         })
-        .then(res=>{
-            const categoryId = res.body._id;
-            request(app).post('/products')
+        const categoryId = category1.body._id;
+        const product1 =await request(app).post('/products')
             .send({
             name       :faker.commerce.department(), 
             id         :faker.random.number(), 
@@ -39,38 +38,29 @@ it('POST-/profiles ,should return a product document containing color and price 
             status     : '1',
             category   : categoryId
             })
-            .then(res=>{
-                const productId = res.body._id; 
-                request(app).post('/profiles')
+        
+        const productId = product1.body._id; 
+        const profile1  =await request(app).post('/profiles')
                 .send({
                     productId:productId,
                     color: 'black', 
                     price : 5000
-            })        
-            .then(res=>{
-                request(app).get(`/products/${productId}`)
-                .then(res=>{
-                    const profile = res.body.profile; 
-                    expect(profile.color).to.equal('black');
-                    expect(profile.price).to.equal(5000);
-                    done(); 
-                })
-            })
-        })
-    })
-    .catch(err=>done(err))
+            })      
+        const productContainingProfile=await request(app).get(`/products/${productId}`)
+        const profile = productContainingProfile.body.profile; 
+        expect(profile.color).to.equal('black');
+        expect(profile.price).to.equal(5000);
 })
 
-it('PUT-/profiles/:id ,should update color and price in profile of a product documents',(done)=>{
-    request(app).post('/categories')
+it('PUT-/profiles/:id ,should update color and price in profile of a product documents',async()=>{
+    const category1=await request(app).post('/categories')
     .send({
         name       :faker.commerce.department(), 
         id         :faker.random.number(), 
         description:faker.commerce.productAdjective() 
     })
-    .then(res=>{
-        const categoryId = res.body._id;
-        request(app).post('/products')
+    const categoryId = category1.body._id;
+    const product1=await request(app).post('/products')
         .send({
         name       :faker.commerce.department(), 
         id         :faker.random.number(), 
@@ -78,52 +68,38 @@ it('PUT-/profiles/:id ,should update color and price in profile of a product doc
         status     : '1',
         category   : categoryId
         })
-        .then(res=>{
-            const productId = res.body._id; 
-            request(app).post('/profiles')
+    const productId = product1.body._id; 
+    const profile1=await request(app).post('/profiles')
             .send({
                 productId:productId,
                 color: 'black', 
                 price : 5000
         })        
-        .then(res=>{
-            request(app).get(`/products/${productId}`)
-            .then(res=>{
-                const profile   = res.body.profile;
-                const profileId = res.body.profile._id;  
-                expect(profile.color).to.equal('black');
-                expect(profile.price).to.equal(5000);
-                request(app).put(`/profiles/${profileId}`)
+    const productContainingProfile=await request(app).get(`/products/${productId}`)
+    const profile   = productContainingProfile.body.profile;
+    const profileId = productContainingProfile.body.profile._id;  
+    expect(profile.color).to.equal('black');
+    expect(profile.price).to.equal(5000);
+    const productPut =await request(app).put(`/profiles/${profileId}`)
                 .send({
                     color:'white',
                     price:1000
                 })
-                .then(res=>{
-                    request(app).get(`/products/${productId}`)
-                    .then(res=>{
-                        const profile = res.body.profile; 
-                        expect(profile.color).to.equal('white');
-                        expect(profile.price).to.equal(1000);
-                        done(); 
-                        })
-                        .catch(err=>done(err))
-                    })
-                })
-            })
-        })
-    })
+    const productAfterPut=await request(app).get(`/products/${productId}`)
+    const profileAfterPut = productAfterPut.body.profile; 
+    expect(profileAfterPut.color).to.equal('white');
+    expect(profileAfterPut.price).to.equal(1000);
 })
 
-it('DELETE-/profiles/:id ,should delete a profile of a product document and profile become null',(done)=>{
-    request(app).post('/categories')
+it('DELETE-/profiles/:id ,should delete a profile of a product document and profile become null',async()=>{
+    const category1=await request(app).post('/categories')
     .send({
         name       :faker.commerce.department(), 
         id         :faker.random.number(), 
         description:faker.commerce.productAdjective() 
     })
-    .then(res=>{
-        const categoryId = res.body._id;
-        request(app).post('/products')
+    const categoryId = category1.body._id;
+    const product1=await request(app).post('/products')
         .send({
         name       :faker.commerce.department(), 
         id         :faker.random.number(), 
@@ -131,35 +107,22 @@ it('DELETE-/profiles/:id ,should delete a profile of a product document and prof
         status     : '1',
         category   : categoryId
         })
-        .then(res=>{
-            const productId = res.body._id; 
-            request(app).post('/profiles')
+    const productId = product1.body._id; 
+    const profile1=await request(app).post('/profiles')
             .send({
                 productId:productId,
                 color: 'black', 
                 price : 5000
         })        
-        .then(res=>{
-            request(app).get(`/products/${productId}`)
-            .then(res=>{
-                const profile   = res.body.profile;
-                const profileId = res.body.profile._id;  
-                expect(profile.color).to.equal('black');
-                expect(profile.price).to.equal(5000);
-                request(app).delete(`/profiles/${profileId}`)
-                .then(res=>{
-                    request(app).get(`/products/${productId}`)
-                    .then(res=>{
-                        const profile = res.body.profile; 
-                        expect(profile).to.equal(null);
-                        done(); 
-                        })
-                        .catch(err=>done(err))
-                    })
-                })
-            })
-        })
-    })
+    const productContainingProfile=await request(app).get(`/products/${productId}`)
+    const profile   = productContainingProfile.body.profile;
+    const profileId = productContainingProfile.body.profile._id;  
+    expect(profile.color).to.equal('black');
+    expect(profile.price).to.equal(5000);
+    const profileDelete=await request(app).delete(`/profiles/${profileId}`)
+    const productAfterDelete=await request(app).get(`/products/${productId}`)
+    const productProfileAfterDelete = productAfterDelete.body.profile; 
+    expect(productProfileAfterDelete).to.equal(null);
+                      
 })
-
 })

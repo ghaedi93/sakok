@@ -7,13 +7,13 @@ const conn = require('../../db');
 const faker= require('faker');
 
 describe('/categories',()=>{
-    before((done)=>{
+    beforeEach((done)=>{
         conn.connect()
         .then(()=>done())
         .catch(err=>done(err))
     })
 
-    after((done)=>{
+    afterEach((done)=>{
         conn.close()
         .then(()=>{
             done()
@@ -22,146 +22,126 @@ describe('/categories',()=>{
             done(err)
         })
     })
-    it('GET-/categories ,should contain 2 category documents after creating',(done)=>{
-        request(app).post('/categories')
-        .send({
-            name       :faker.commerce.department(), 
-            id         :faker.random.number(), 
-            description:faker.commerce.productAdjective() 
-        })
-        .then(res=>{
+    it('GET-/categories ,should contain 2 category documents after creating',async()=>{
+            const category1 = await  
+            request(app).post('/categories')
+            .send({
+                name       :faker.commerce.department(), 
+                id         :faker.random.number(), 
+                description:faker.commerce.productAdjective() 
+            }); 
+            const category2 = await
             request(app).post('/categories')
             .send({
             name       :faker.commerce.department(), 
             id         :faker.random.number(), 
             description:faker.commerce.productAdjective() 
-        }).then(res=>{
-            request(app).get('/categories')
-            .then(res=>{
-                const categories = res.body; 
-                expect(categories.length).to.equal(2);
-                done(); 
-                })
             })
-        })
-        .catch(err=>done(err))
+
+            const result =await 
+            request(app).get('/categories')
+            .set('Content-Type', 'application/json')
+            .set('Acccept', 'application/json')
+            .catch(err => { 
+                throw err; 
+            })
+            const categories= result.body;
+            expect(categories.length).to.equal(2);
+
     })
-    it('GET-/categories?name=name1 ,should contain 1 category documents after creating 2',(done)=>{
+    it('GET-/categories?name=name1 ,should contain 1 category documents after creating 2',async()=>{
+        const category1=await
         request(app).post('/categories')
-        .send({
-            name       :faker.commerce.department(), 
-            id         :faker.random.number(), 
-            description:faker.commerce.productAdjective() 
-        })
-        .then(res=>{
-            request(app).post('/categories')
             .send({
             name       :'name1', 
             id         :faker.random.number(), 
             description:faker.commerce.productAdjective() 
         })
-        .then(res=>{
-            request(app).post('/categories')
+        const category2=await
+        request(app).post('/categories')
             .send({
                 name       :'name2', 
                 id         :faker.random.number(), 
                 description:faker.commerce.productAdjective() 
             })
-            .then(res=>{
-                request(app).get('/categories?name=name1')
-                .then(res=>{
-                    const categories = res.body; 
-                    expect(categories.length).to.equal(1);
-                    done(); 
-                    })
-                .catch(err=>done(err))
-                })
+
+        const result =await 
+        request(app).get('/categories?name=name1')
+            .set('Content-Type', 'application/json')
+            .set('Acccept', 'application/json')
+            .catch(err => { 
+                throw err; 
             })
-        })
-        .catch(err=>done(err))
+        const categories= result.body;
+        expect(categories.length).to.equal(1);
     })
-    it('GET-/categories/:id ,should fetch a category document based on its id',(done)=>{
-        request(app).post('/categories')
+    it('GET-/categories/:id ,should fetch a category document based on its id',async()=>{
+        const category1=await request(app).post('/categories')
         .send({
             name       :faker.commerce.department(), 
             id         :faker.random.number(), 
             description:faker.commerce.productAdjective() 
         })
-        .then(res=>{
-            const categoryId = res.body._id; 
-            request(app).get(`/categories/${categoryId}`)
-            .then(res=>{
-                const category = res.body;
-                expect(category).to.have.property('name')
-                expect(category).to.have.property('id')
-                expect(category).to.have.property('description')
-                done(); 
+        const categoryId = category1.body._id; 
+        const result=await request(app).get(`/categories/${categoryId}`)
+        .set('Content-Type', 'application/json')
+        .set('Acccept', 'application/json')
+        .catch(err => { 
+                throw err; 
             })
-        })
-        .catch(err=>done(err))
+        const categories=result.body;
+        expect(categories).to.have.property('name')
+        expect(categories).to.have.property('id')
+        expect(categories).to.have.property('description')
+        
     })
 
-    it('POST-/categories ,should contain category properties like name , id , description',(done)=>{
-        request(app).post('/categories')
+    it('POST-/categories ,should contain category properties like name , id , description',async()=>{
+        const category1=await request(app).post('/categories')
         .send({
             name       :faker.commerce.department(), 
             id         :faker.random.number(), 
             description:faker.commerce.productAdjective() 
         })
-        .then(res=>{
-            const category = res.body;
-            expect(category).to.have.property('name')
-            expect(category).to.have.property('id')
-            expect(category).to.have.property('description')
-            done()
-        })
-        .catch(err=>done(err))
+        const category = category1.body;
+        expect(category).to.have.property('name')
+        expect(category).to.have.property('id')
+        expect(category).to.have.property('description')
     })
 
-    it('PUT-/categories/:id ,should update the category',(done)=>{
-        request(app).post('/categories')
+    it('PUT-/categories/:id ,should update the category',async()=>{
+        const category1=await request(app).post('/categories')
         .send({
             name       :faker.commerce.department(), 
             id         :faker.random.number(), 
             description:faker.commerce.productAdjective() 
         })
-        .then(res=>{
-            const categoryId = res.body._id; 
-            request(app).put(`/categories/${categoryId}`)
+        const categoryId = category1.body._id; 
+        const putCategory1=await request(app).put(`/categories/${categoryId}`)
             .send({
                 name : 'javad',
                 id   : '1', 
                 description : 'maker'
             })
-            .then(res=>{
-                const body = res.body; 
-                expect(body.n).to.equal(1);
-                expect(body.nModified).to.equal(1);
-                expect(body.ok).to.equal(1);
-                done(); 
-            })
-        })
-        .catch(err=>done(err))
+        const category1AfterPut = putCategory1.body; 
+        expect(category1AfterPut.n).to.equal(1);
+        expect(category1AfterPut.nModified).to.equal(1);
+        expect(category1AfterPut.ok).to.equal(1);
+
     })
 
-    it('DELETE-/categories/:id ,should update the category',(done)=>{
-        request(app).post('/categories')
+    it('DELETE-/categories/:id ,should update the category',async()=>{
+        const category1=await request(app).post('/categories')
         .send({
             name       :faker.commerce.department(), 
             id         :faker.random.number(), 
             description:faker.commerce.productAdjective() 
         })
-        .then(res=>{
-            const categoryId = res.body._id; 
-            request(app).delete(`/categories/${categoryId}`)
-            .then(res=>{
-                const body = res.body; 
-                expect(body.n).to.equal(1);
-                expect(body.deletedCount).to.equal(1);
-                expect(body.ok).to.equal(1);
-                done(); 
-            })
-        })
-        .catch(err=>done(err))
+        const categoryId = category1.body._id; 
+        const deleteCategory1=await request(app).delete(`/categories/${categoryId}`)
+        const category1AfterDelete=deleteCategory1.body; 
+        expect(category1AfterDelete.n).to.equal(1);
+        expect(category1AfterDelete.deletedCount).to.equal(1);
+        expect(category1AfterDelete.ok).to.equal(1);
     })
 })
